@@ -11,13 +11,13 @@ import (
 
 // NewClient instantiates a Client associated with a client id, secret and environment.
 // See https://plaid.com/docs/api/#gaining-access.
-func NewClient(clientID, secret string, environment environmentURL) *Client {
+func NewClient(clientID, secret string, environment EnvironmentURL) *Client {
 	return &Client{clientID, secret, environment, &http.Client{}}
 }
 
 // Same as above but with additional parameter to pass http.Client. This is required
 // if you want to run the code on Google AppEngine which prohibits use of http.DefaultClient
-func NewCustomClient(clientID, secret string, environment environmentURL, httpClient *http.Client) *Client {
+func NewCustomClient(clientID, secret string, environment EnvironmentURL, httpClient *http.Client) *Client {
 	return &Client{clientID, secret, environment, httpClient}
 }
 
@@ -28,14 +28,14 @@ func NewCustomClient(clientID, secret string, environment environmentURL, httpCl
 type Client struct {
 	clientID    string
 	secret      string
-	environment environmentURL
+	environment EnvironmentURL
 	httpClient  *http.Client
 }
 
-type environmentURL string
+type EnvironmentURL string
 
-var Tartan environmentURL = "https://tartan.plaid.com"
-var Production environmentURL = "https://api.plaid.com"
+var Tartan EnvironmentURL = "https://tartan.plaid.com"
+var Production EnvironmentURL = "https://api.plaid.com"
 
 type Account struct {
 	ID      string `json:"_id"`
@@ -149,7 +149,7 @@ type deleteResponse struct {
 }
 
 // getAndUnmarshal is not a method because no client authentication is required
-func getAndUnmarshal(environment environmentURL, endpoint string, structure interface{}) error {
+func getAndUnmarshal(environment EnvironmentURL, endpoint string, structure interface{}) error {
 	res, err := http.Get(string(environment) + endpoint)
 	if err != nil {
 		return err
@@ -168,7 +168,7 @@ func getAndUnmarshal(environment environmentURL, endpoint string, structure inte
 		return nil
 	}
 	// Attempt to unmarshal into Plaid error format
-	var plaidErr plaidError
+	var plaidErr Error
 	if err = json.Unmarshal(raw, &plaidErr); err != nil {
 		return err
 	}
@@ -248,7 +248,7 @@ func (c *Client) deleteAndUnmarshal(endpoint string,
 		return &deleteRes, nil
 	}
 	// Attempt to unmarshal into Plaid error format
-	var plaidErr plaidError
+	var plaidErr Error
 	if err = json.Unmarshal(raw, &plaidErr); err != nil {
 		return nil, err
 	}
@@ -362,7 +362,7 @@ func unmarshalPostMFA(res *http.Response, body []byte) (*postResponse, *mfaRespo
 
 	// Error case, attempt to unmarshal into Plaid error format
 	case res.StatusCode >= 400:
-		var plaidErr plaidError
+		var plaidErr Error
 		if err = json.Unmarshal(body, &plaidErr); err != nil {
 			return nil, nil, err
 		}

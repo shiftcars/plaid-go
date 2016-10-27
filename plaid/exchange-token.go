@@ -21,9 +21,14 @@ func (c *Client) ExchangeToken(publicToken string) (postRes *postResponse, err e
 	return postRes, err
 }
 
+type ExchangeTokenAccountResponse struct {
+	AccessToken string
+	StripeBankAccountToken string
+}
+
 // ExchangeTokenAccount (POST /exchange_token) exchanges a public token and account id to receive a
 // bank account token.
-func (c *Client) ExchangeTokenAccount(publicToken string, accountId string) (postRes *postResponse, err error) {
+func (c *Client) ExchangeTokenAccount(publicToken string, accountId string) (res *ExchangeTokenAccountResponse, err error) {
 	jsonText, err := json.Marshal(exchangeAccountJson{
 		c.clientID,
 		c.secret,
@@ -33,8 +38,15 @@ func (c *Client) ExchangeTokenAccount(publicToken string, accountId string) (pos
 	if err != nil {
 		return nil, err
 	}
-	postRes, _, err = c.postAndUnmarshal("/exchange_token", bytes.NewReader(jsonText))
-	return postRes, err
+	postRes, _, err := c.postAndUnmarshal("/exchange_token", bytes.NewReader(jsonText))
+	if err != nil {
+		return nil, err
+	}
+
+	return &ExchangeTokenAccountResponse{
+		AccessToken: postRes.AccessToken,
+		StripeBankAccountToken: postRes.BankAccountToken,
+	}, err
 }
 
 type exchangeJson struct {

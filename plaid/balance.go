@@ -5,10 +5,17 @@ import (
 	"encoding/json"
 )
 
+// Account.Numbers will be empty
+type BalanceResponse struct {
+	// Normal response fields
+	AccessToken      string        `json:"access_token"`
+	Accounts         []Account     `json:"accounts"`
+}
+
 // Balance (POST /balance) retrieves real-time balance for a given access token.
 //
 // See https://plaid.com/docs/api/#balance.
-func (c *Client) Balance(accessToken string) (postRes *postResponse, err error) {
+func (c *Client) Balance(accessToken string) (res *BalanceResponse, err error) {
 	jsonText, err := json.Marshal(balanceJson{
 		c.clientID,
 		c.secret,
@@ -17,8 +24,11 @@ func (c *Client) Balance(accessToken string) (postRes *postResponse, err error) 
 	if err != nil {
 		return nil, err
 	}
-	postRes, _, err = c.postAndUnmarshal("/balance", bytes.NewReader(jsonText))
-	return postRes, err
+	postRes, _, err := c.postAndUnmarshal("/balance", bytes.NewReader(jsonText))
+	return &BalanceResponse{
+		AccessToken: postRes.AccessToken,
+		Accounts: postRes.Accounts,
+	}, err
 }
 
 type balanceJson struct {
