@@ -25,6 +25,9 @@ func (c *Client) Balance(accessToken string) (res *BalanceResponse, err error) {
 		return nil, err
 	}
 	postRes, _, err := c.postAndUnmarshal("/balance", bytes.NewReader(jsonText))
+	if err != nil  {
+		return nil, err
+	}
 	return &BalanceResponse{
 		AccessToken: postRes.AccessToken,
 		Accounts: postRes.Accounts,
