@@ -17,9 +17,9 @@ type BalanceResponse struct {
 // See https://plaid.com/docs/api/#balance.
 func (c *Client) Balance(accessToken string) (res *BalanceResponse, err error) {
 	jsonText, err := json.Marshal(balanceJson{
-		c.clientID,
-		c.secret,
-		accessToken,
+		ClientID:    c.clientID,
+		Secret:      c.secret,
+		AccessToken: accessToken,
 	})
 	if err != nil {
 		return nil, err

@@ -10,9 +10,9 @@ import (
 // See https://github.com/plaid/link
 func (c *Client) ExchangeToken(publicToken string) (postRes *postResponse, err error) {
 	jsonText, err := json.Marshal(exchangeJson{
-		c.clientID,
-		c.secret,
-		publicToken,
+		ClientID:    c.clientID,
+		Secret:      c.secret,
+		PublicToken: publicToken,
 	})
 	if err != nil {
 		return nil, err
@@ -30,10 +30,10 @@ type ExchangeTokenAccountResponse struct {
 // bank account token.
 func (c *Client) ExchangeTokenAccount(publicToken string, accountId string) (res *ExchangeTokenAccountResponse, err error) {
 	jsonText, err := json.Marshal(exchangeAccountJson{
-		c.clientID,
-		c.secret,
-		publicToken,
-		accountId,
+		ClientID:    c.clientID,
+		Secret:      c.secret,
+		PublicToken: publicToken,
+		AccountId:   accountId,
 	})
 	if err != nil {
 		return nil, err
