@@ -1,3 +1,6 @@
+# DEPRECATED in favor of our own externalapis/plaid2 
+# Plaid deprecated the go client library so we rolled our own v2 library
+
 # plaid-go
 
 plaid-go is a Go client implementation of the [Plaid API](https://plaid.com/docs).
